@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "content": "This is a sample knowledge entry.",
+    "metadata": {
+      "source": "docs"
+    }
+  },
+  {
+    "id": "2",
+    "content": "Another entry for the AI to reference.",
+    "metadata": {
+      "source": "faq"
+    }
+  }
+]

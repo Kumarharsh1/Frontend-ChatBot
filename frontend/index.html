@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-AI ChatBot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Styles */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 80px 20px 60px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape1 {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape2 {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape3 {
+            width: 100px;
+            height: 100px;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2em;
+        }
+
+        .logo-text {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(76, 201, 240, 0.1);
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .credits-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            z-index: 1000;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .credits-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .divider {
+            opacity: 0.6;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .app-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            min-height: calc(100vh - 140px);
+        }
+
+        .sidebar {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .assistants-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .assistant-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(67, 97, 238, 0.05);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            width: 100%;
+        }
+
+        .assistant-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .assistant-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .assistant-btn.active .btn-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn-icon {
+            font-size: 1.5em;
+        }
+
+        .btn-content {
+            flex: 1;
+        }
+
+        .btn-title {
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .btn-subtitle {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        .btn-badge {
+            padding: 4px 8px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 10px;
+            font-size: 0.7em;
+            font-weight: 600;
+        }
+
+        .upload-area {
+            border: 2px dashed #4cc9f0;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .upload-area:hover {
+            background: rgba(76, 201, 240, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .upload-icon {
+            font-size: 2em;
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .url-input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .url-input-group .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--info);
+        }
+
+        .url-input-group input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            outline: none;
+            font-size: 0.9em;
+        }
+
+        .url-input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .process-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .process-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: rgba(67, 97, 238, 0.05);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            background: rgba(67, 97, 238, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .chat-area {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 140px);
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .current-assistant {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .assistant-avatar {
+            font-size: 2.5em;
+        }
+
+        .assistant-info h3 {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .assistant-info p {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .chat-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            padding: 10px;
+            background: rgba(67, 97, 238, 0.05);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--dark);
+        }
+
+        .control-btn:hover {
+            background: rgba(67, 97, 238, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-avatar {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .welcome-content h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .welcome-content p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .welcome-features {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .feature-tag {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .bot-message {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px;
+            border-radius: 15px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .user-message .message-content {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message .message-content {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-meta {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            padding: 20px 25px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .input-tools {
+            display: flex;
+            gap: 5px;
+        }
+
+        .tool-btn {
+            padding: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--dark);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        #messageInput {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            resize: none;
+            outline: none;
+            min-height: 60px;
+            max-height: 120px;
+            font-family: inherit;
+        }
+
+        #messageInput:focus {
+            border-color: var(--primary);
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        .send-btn {
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .emoji-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoji-container {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 400px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .emoji-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .emoji-header h4 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            color: #6c757d;
+        }
+
+        .emoji-categories {
+            display: flex;
+            padding: 0 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .category-btn {
+            padding: 10px 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            border-bottom: 2px solid transparent;
+        }
+
+        .category-btn.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .emoji-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .emoji-grid span {
+            font-size: 1.5em;
+            cursor: pointer;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .emoji-grid span:hover {
+            background: rgba(0,0,0,0.1);
+            transform: scale(1.2);
+        }
+
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+        }
+
+        .notification {
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            color: white;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            animation: slideInRight 0.4s ease;
+        }
+
+        .notification-success {
+            background: linear-gradient(135deg, #96CEB4, #84DCC6);
+        }
+
+        .notification-error {
+            background: linear-gradient(135deg, #FF6B8B, #FF8FA3);
+        }
+
+        .notification-warning {
+            background: linear-gradient(135deg, #FFEAA7, #FFD166);
+            color: #333;
+        }
+
+        .notification-info {
+            background: linear-gradient(135deg, #45B7D1, #4ECDC4);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+            
+            .chat-area {
+                order: 1;
+                height: 60vh;
+            }
+            
+            .credits-content {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="bg-shape shape1"></div>
+        <div class="bg-shape shape2"></div>
+        <div class="bg-shape shape3"></div>
+    </div>
+
+    <!-- Fixed Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo-icon">🤖</div>
+                <h1 class="logo-text">Multi-AI ChatBot</h1>
+            </div>
+            <div class="header-status">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span class="status-text">Online</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Fixed Credits -->
+    <footer class="credits-footer">
+        <div class="credits-content">
+            <span>Developed by <strong>Kumar Harsh</strong></span>
+            <span class="divider">|</span>
+            <span><i class="fas fa-envelope"></i> kh949118@gmail.com</span>
+            <span class="divider">|</span>
+            <span><i class="fas fa-phone"></i> +91-9279157296</span>
+        </div>
+    </footer>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="app-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- AI Assistants Section -->
+                <section class="assistants-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-robot"></i>
+                        AI Assistants
+                    </h3>
+                    <div class="assistants-grid">
+                        <button class="assistant-btn active" data-type="general">
+                            <div class="btn-icon">🔮</div>
+                            <div class="btn-content">
+                                <div class="btn-title">General AI</div>
+                                <div class="btn-subtitle">All-purpose assistant</div>
+                            </div>
+                            <div class="btn-badge">Free</div>
+                        </button>
+
+                        <button class="assistant-btn" data-type="news">
+                            <div class="btn-icon">📰</div>
+                            <div class="btn-content">
+                                <div class="btn-title">News Assistant</div>
+                                <div class="btn-subtitle">Latest updates</div>
+                            </div>
+                            <div class="btn-badge">Live</div>
+                        </button>
+
+                        <button class="assistant-btn" data-type="health">
+                            <div class="btn-icon">🏥</div>
+                            <div class="btn-content">
+                                <div class="btn-title">Health & Wellness</div>
+                                <div class="btn-subtitle">Medical guidance</div>
+                            </div>
+                            <div class="btn-badge">Safe</div>
+                        </button>
+
+                        <button class="assistant-btn" data-type="ecommerce">
+                            <div class="btn-icon">🛒</div>
+                            <div class="btn-content">
+                                <div class="btn-title">E-commerce</div>
+                                <div class="btn-subtitle">Shopping help</div>
+                            </div>
+                            <div class="btn-badge">Hot</div>
+                        </button>
+
+                        <button class="assistant-btn" data-type="travel">
+                            <div class="btn-icon">✈️</div>
+                            <div class="btn-content">
+                                <div class="btn-title">Travel & Hospitality</div>
+                                <div class="btn-subtitle">Trip planning</div>
+                            </div>
+                            <div class="btn-badge">New</div>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Upload Section -->
+                <section class="upload-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        Upload Files & URLs
+                    </h3>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div class="upload-text">
+                            <p>Click to upload or drag & drop</p>
+                            <small>PDF, TXT files (Max 10MB)</small>
+                        </div>
+                        <input type="file" id="fileInput" accept=".pdf,.txt" hidden>
+                    </div>
+
+                    <div class="url-input-group">
+                        <div class="input-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <input type="text" id="urlInput" placeholder="Paste website URL here...">
+                    </div>
+
+                    <button class="process-btn" id="processBtn">
+                        <i class="fas fa-cogs"></i>
+                        Process Content
+                    </button>
+                </section>
+
+                <!-- Quick Actions -->
+                <section class="actions-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-bolt"></i>
+                        Quick Actions
+                    </h3>
+                    <div class="actions-grid">
+                        <button class="action-btn" id="clearChatBtn">
+                            <i class="fas fa-broom"></i>
+                            Clear Chat
+                        </button>
+                        <button class="action-btn" id="exportChatBtn">
+                            <i class="fas fa-download"></i>
+                            Export Chat
+                        </button>
+                        <button class="action-btn" id="settingsBtn">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </button>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Chat Area -->
+            <section class="chat-area">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="current-assistant">
+                        <div class="assistant-avatar">
+                            <span>🔮</span>
+                        </div>
+                        <div class="assistant-info">
+                            <h3 class="assistant-name">General AI Assistant</h3>
+                            <p class="assistant-desc">Ready to help with anything!</p>
+                        </div>
+                    </div>
+                    <div class="chat-controls">
+                        <button class="control-btn" id="themeBtn" title="Toggle Theme">
+                            <i class="fas fa-palette"></i>
+                        </button>
+                        <button class="control-btn" id="emojiBtn" title="Emoji Picker">
+                            <i class="far fa-smile"></i>
+                        </button>
+                        <button class="control-btn" id="helpBtn" title="Help">
+                            <i class="fas fa-question"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <div class="welcome-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="welcome-content">
+                            <h3>Welcome to Multi-AI ChatBot! 🎉</h3>
+                            <p>I'm your intelligent assistant powered by advanced AI. Choose a specialized assistant from the sidebar and let's start chatting!</p>
+                            <div class="welcome-features">
+                                <div class="feature-tag">
+                                    <i class="fas fa-bolt"></i>
+                                    <span>Fast Responses</span>
+                                </div>
+                                <div class="feature-tag">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Secure & Private</span>
+                                </div>
+                                <div class="feature-tag">
+                                    <i class="fas fa-brain"></i>
+                                    <span>Smart AI</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-container">
+                    <div class="input-tools">
+                        <button class="tool-btn" id="attachBtn" title="Attach File">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="tool-btn" id="emojiPickerBtn" title="Insert Emoji">
+                            <i class="far fa-smile"></i>
+                        </button>
+                        <button class="tool-btn" id="voiceBtn" title="Voice Input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your message here... (Press Enter to send)" 
+                            rows="1"
+                        ></textarea>
+                        <div class="typing-indicator" id="typingIndicator">
+                            <div class="typing-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span>AI is typing...</span>
+                        </div>
+                    </div>
+                    
+                    <button class="send-btn" id="sendBtn" title="Send Message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Emoji Picker Modal -->
+    <div class="emoji-modal" id="emojiModal">
+        <div class="emoji-container">
+            <div class="emoji-header">
+                <h4>Select Emoji</h4>
+                <button class="close-btn" id="closeEmojiBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="emoji-categories">
+                <button class="category-btn active" data-category="smileys">😊 Smileys</button>
+                <button class="category-btn" data-category="objects">🎉 Objects</button>
+                <button class="category-btn" data-category="symbols">💡 Symbols</button>
+            </div>
+            <div class="emoji-grid" id="emojiGrid">
+                <!-- Emojis will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <script>
+        // Complete JavaScript Code
+        const CONFIG = {
+            assistants: {
+                general: { 
+                    name: "General AI Assistant", 
+                    desc: "Your magical helper for everything!", 
+                    icon: "🔮",
+                    color: "#FF6B8B",
+                    avatar: "🔮"
+                },
+                news: { 
+                    name: "News Assistant", 
+                    desc: "Fresh news and hot topics!", 
+                    icon: "📰",
+                    color: "#4ECDC4",
+                    avatar: "📰"
+                },
+                health: { 
+                    name: "Health & Wellness", 
+                    desc: "Your friendly health advisor!", 
+                    icon: "🏥",
+                    color: "#45B7D1",
+                    avatar: "🏥"
+                },
+                ecommerce: { 
+                    name: "E-commerce Assistant", 
+                    desc: "Shopping made fun and easy!", 
+                    icon: "🛒",
+                    color: "#96CEB4",
+                    avatar: "🛒"
+                },
+                travel: { 
+                    name: "Travel Assistant", 
+                    desc: "Adventure and travel planning!", 
+                    icon: "✈️",
+                    color: "#FFEAA7",
+                    avatar: "✈️"
+                }
+            },
+            emojis: {
+                smileys: ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩", "🥳"],
+                objects: ["🎉", "🎊", "🎁", "🎈", "🎂", "🍰", "🧁", "🍭", "🍫", "🍩", "🍪", "☕", "🍵", "🍎", "🍊", "🍇", "🍓", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒", "🌶️"],
+                symbols: ["❤️", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❤️‍🔥", "❤️‍🩹", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟", "☮️", "✝️", "☪️", "🕉️", "☸️", "✡️", "🔯", "🕎", "☯️", "☦️", "🛐"]
+            }
+        };
+
+        let state = {
+            currentAssistant: 'general',
+            messages: [],
+            isTyping: false,
+            emojiModalOpen: false,
+            messageCount: 0,
+            fileCount: 0
+        };
+
+        const elements = {
+            assistantBtns: document.querySelectorAll('.assistant-btn'),
+            currentAssistant: document.querySelector('.current-assistant'),
+            chatMessages: document.getElementById('chatMessages'),
+            messageInput: document.getElementById('messageInput'),
+            sendBtn: document.getElementById('sendBtn'),
+            fileInput: document.getElementById('fileInput'),
+            uploadArea: document.getElementById('uploadArea'),
+            urlInput: document.getElementById('urlInput'),
+            processBtn: document.getElementById('processBtn'),
+            emojiModal: document.getElementById('emojiModal'),
+            emojiGrid: document.getElementById('emojiGrid'),
+            closeEmojiBtn: document.getElementById('closeEmojiBtn'),
+            emojiPickerBtn: document.getElementById('emojiPickerBtn'),
+            emojiBtn: document.getElementById('emojiBtn'),
+            typingIndicator: document.getElementById('typingIndicator'),
+            clearChatBtn: document.getElementById('clearChatBtn'),
+            exportChatBtn: document.getElementById('exportChatBtn'),
+            themeBtn: document.getElementById('themeBtn'),
+            attachBtn: document.getElementById('attachBtn'),
+            voiceBtn: document.getElementById('voiceBtn'),
+            helpBtn: document.getElementById('helpBtn'),
+            settingsBtn: document.getElementById('settingsBtn'),
+            categoryBtns: document.querySelectorAll('.category-btn'),
+            notificationContainer: document.getElementById('notificationContainer')
+        };
+
+        function init() {
+            setupEventListeners();
+            loadEmojis();
+            showNotification('🎉 Welcome to Multi-AI ChatBot!', 'success');
+            
+            setTimeout(() => {
+                elements.messageInput.focus();
+            }, 1000);
+        }
+
+        function setupEventListeners() {
+            // Assistant buttons
+            elements.assistantBtns.forEach(btn => {
+                btn.addEventListener('click', () => switchAssistant(btn.dataset.type));
+            });
+
+            // Message input
+            elements.messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            elements.messageInput.addEventListener('input', autoResizeTextarea);
+            elements.sendBtn.addEventListener('click', sendMessage);
+
+            // File upload
+            elements.uploadArea.addEventListener('click', () => elements.fileInput.click());
+            elements.fileInput.addEventListener('change', handleFileSelect);
+            elements.uploadArea.addEventListener('dragover', handleDragOver);
+            elements.uploadArea.addEventListener('drop', handleFileDrop);
+            elements.attachBtn.addEventListener('click', () => elements.fileInput.click());
+
+            // URL processing
+            elements.processBtn.addEventListener('click', processUpload);
+            elements.urlInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') processUpload();
+            });
+
+            // Emoji picker
+            elements.emojiPickerBtn.addEventListener('click', toggleEmojiModal);
+            elements.emojiBtn.addEventListener('click', toggleEmojiModal);
+            elements.closeEmojiBtn.addEventListener('click', toggleEmojiModal);
+
+            // Category buttons
+            elements.categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => switchEmojiCategory(btn.dataset.category));
+            });
+
+            // Clear chat
+            elements.clearChatBtn.addEventListener('click', clearChat);
+
+            // Export chat
+            elements.exportChatBtn.addEventListener('click', exportChat);
+
+            // Theme button
+            elements.themeBtn.addEventListener('click', toggleTheme);
+
+            // Help button
+            elements.helpBtn.addEventListener('click', showHelp);
+
+            // Settings button
+            elements.settingsBtn.addEventListener('click', showSettings);
+
+            // Voice button
+            elements.voiceBtn.addEventListener('click', toggleVoiceInput);
+
+            // Close emoji modal when clicking outside
+            document.addEventListener('click', (e) => {
+                if (state.emojiModalOpen && !elements.emojiModal.contains(e.target) && 
+                    e.target !== elements.emojiPickerBtn && e.target !== elements.emojiBtn) {
+                    toggleEmojiModal();
+                }
+            });
+        }
+
+        function switchAssistant(assistantType) {
+            if (state.currentAssistant === assistantType) return;
+
+            elements.assistantBtns.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-type="${assistantType}"]`).classList.add('active');
+
+            const assistant = CONFIG.assistants[assistantType];
+            elements.currentAssistant.querySelector('.assistant-avatar span').textContent = assistant.icon;
+            elements.currentAssistant.querySelector('.assistant-name').textContent = assistant.name;
+            elements.currentAssistant.querySelector('.assistant-desc').textContent = assistant.desc;
+
+            state.currentAssistant = assistantType;
+            addMessage(`✨ Switched to ${assistant.name} mode! How can I assist you today?`, 'bot');
+            showNotification(`🎯 ${assistant.name} activated!`, 'success');
+        }
+
+        async function sendMessage() {
+            const message = elements.messageInput.value.trim();
+            if (!message) {
+                showNotification('💬 Please enter a message first!', 'warning');
+                return;
+            }
+
+            addMessage(message, 'user');
+            elements.messageInput.value = '';
+            autoResizeTextarea();
+            state.messageCount++;
+
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('http://localhost:5000/api/chat/message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        type: state.currentAssistant
+                    })
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                hideTypingIndicator();
+
+                if (data.error) {
+                    addMessage(`❌ Oops! Error: ${data.error}`, 'bot');
+                    showNotification('⚠️ AI service error', 'error');
+                } else {
+                    addMessage(data.response, 'bot');
+                    showNotification('✅ Response received!', 'success');
+                }
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage('❌ Connection error! Please check if the backend is running on port 5000. 🛠️', 'bot');
+                showNotification('🔌 Connection failed', 'error');
+                console.error('API Error:', error);
+            }
+        }
+
+        function addMessage(content, sender) {
+            if (sender === 'user' && state.messageCount === 0) {
+                const welcomeMsg = document.querySelector('.welcome-message');
+                if (welcomeMsg) welcomeMsg.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            const formattedContent = content.replace(
+                /(https?:\/\/[^\s]+)/g, 
+                '<a href="$1" target="_blank" style="color: inherit; text-decoration: underline; font-weight: 600;">$1</a>'
+            );
+            
+            messageContent.innerHTML = formattedContent;
+            messageDiv.appendChild(messageContent);
+
+            const timestamp = document.createElement('div');
+            timestamp.className = 'message-meta';
+            timestamp.innerHTML = `⏰ ${new Date().toLocaleTimeString()}`;
+            messageDiv.appendChild(timestamp);
+
+            elements.chatMessages.appendChild(messageDiv);
+            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+
+            state.messages.push({ content, sender, timestamp: new Date() });
+        }
+
+        function showTypingIndicator() {
+            state.isTyping = true;
+            elements.typingIndicator.style.display = 'flex';
+            
+            setTimeout(() => {
+                if (state.isTyping) {
+                    hideTypingIndicator();
+                    showNotification('⏰ Request timeout', 'warning');
+                }
+            }, 30000);
+        }
+
+        function hideTypingIndicator() {
+            state.isTyping = false;
+            elements.typingIndicator.style.display = 'none';
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) validateAndUploadFile(file);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            elements.uploadArea.style.borderColor = '#4ECDC4';
+            elements.uploadArea.style.backgroundColor = 'rgba(78, 205, 196, 0.1)';
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            elements.uploadArea.style.borderColor = '';
+            elements.uploadArea.style.backgroundColor = '';
+            
+            const file = e.dataTransfer.files[0];
+            if (file) validateAndUploadFile(file);
+        }
+
+        function validateAndUploadFile(file) {
+            const validTypes = ['application/pdf', 'text/plain'];
+            const maxSize = 10 * 1024 * 1024;
+
+            if (!validTypes.includes(file.type)) {
+                showNotification('❌ Please select a PDF or text file!', 'error');
+                return;
+            }
+
+            if (file.size > maxSize) {
+                showNotification('❌ File size must be less than 10MB', 'error');
+                return;
+            }
+
+            uploadFile(file);
+        }
+
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('type', state.currentAssistant);
+
+            try {
+                showNotification('📤 Uploading and processing file...', 'info');
+                const response = await fetch('http://localhost:5000/api/upload/file', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+
+                const data = await response.json();
+                if (data.error) {
+                    showNotification('❌ Upload error: ' + data.error, 'error');
+                } else {
+                    showNotification('✅ File processed successfully!', 'success');
+                    state.fileCount++;
+                    elements.fileInput.value = '';
+                    
+                    addMessage(`📁 File "${file.name}" has been processed and is now available for questions!`, 'bot');
+                }
+            } catch (error) {
+                showNotification('❌ Upload failed: ' + error.message, 'error');
+            }
+        }
+
+        async function processUpload() {
+            const url = elements.urlInput.value.trim();
+            
+            if (!url) {
+                showNotification('📁 Please enter a URL!', 'warning');
+                return;
+            }
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                showNotification('🌐 Please enter a valid URL starting with http:// or https://', 'error');
+                return;
+            }
+
+            try {
+                showNotification('🔗 Processing URL content...', 'info');
+                const response = await fetch('http://localhost:5000/api/upload/url', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        type: state.currentAssistant
+                    })
+                });
+
+                if (!response.ok) throw new Error(`URL processing failed: ${response.status}`);
+
+                const data = await response.json();
+                if (data.error) {
+                    showNotification('❌ URL processing error: ' + data.error, 'error');
+                } else {
+                    showNotification('✅ URL content processed successfully!', 'success');
+                    elements.urlInput.value = '';
+                    
+                    addMessage(`🔗 Content from URL has been processed and is now available for questions!`, 'bot');
+                }
+            } catch (error) {
+                showNotification('❌ URL processing failed: ' + error.message, 'error');
+            }
+        }
+
+        function loadEmojis() {
+            switchEmojiCategory('smileys');
+        }
+
+        function switchEmojiCategory(category) {
+            elements.categoryBtns.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            
+            let html = '';
+            CONFIG.emojis[category].forEach(emoji => {
+                html += `<span onclick="insertEmoji('${emoji}')">${emoji}</span>`;
+            });
+            elements.emojiGrid.innerHTML = html;
+        }
+
+        function toggleEmojiModal() {
+            state.emojiModalOpen = !state.emojiModalOpen;
+            elements.emojiModal.style.display = state.emojiModalOpen ? 'flex' : 'none';
+        }
+
+        function insertEmoji(emoji) {
+            elements.messageInput.value += emoji;
+            elements.messageInput.focus();
+            toggleEmojiModal();
+        }
+
+        function autoResizeTextarea() {
+            const textarea = elements.messageInput;
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat history? 🧹')) {
+                elements.chatMessages.innerHTML = '';
+                state.messages = [];
+                state.messageCount = 0;
+                
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.className = 'welcome-message';
+                welcomeMsg.innerHTML = `
+                    <div class="welcome-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="welcome-content">
+                        <h3>Chat Cleared! 🧹</h3>
+                        <p>Fresh start! Choose an assistant and let's begin a new adventure! 🚀</p>
+                    </div>
+                `;
+                elements.chatMessages.appendChild(welcomeMsg);
+                
+                showNotification('💫 Chat history cleared!', 'info');
+            }
+        }
+
+        function exportChat() {
+            if (state.messages.length === 0) {
+                showNotification('💬 No chat history to export!', 'warning');
+                return;
+            }
+
+            const chatData = {
+                exportDate: new Date().toISOString(),
+                totalMessages: state.messageCount,
+                chatHistory: state.messages
+            };
+
+            const dataStr = JSON.stringify(chatData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `chat-export-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showNotification('📁 Chat exported successfully!', 'success');
+        }
+
+        function toggleTheme() {
+            showNotification('🎨 Theme changer coming soon!', 'info');
+        }
+
+        function showHelp() {
+            addMessage(`🤖 **Multi-AI ChatBot Help**\n\n• **Switch Assistants**: Click on different AI assistants in the sidebar\n• **Upload Files**: Drag & drop or click to upload PDF/TXT files\n• **Process URLs**: Paste website URLs to analyze content\n• **Quick Actions**: Use the buttons for clearing chat, exporting, etc.\n• **Keyboard Shortcuts**: Press Enter to send, Shift+Enter for new line`, 'bot');
+        }
+
+        function showSettings() {
+            showNotification('⚙️ Settings panel coming soon!', 'info');
+        }
+
+        function toggleVoiceInput() {
+            showNotification('🎤 Voice input feature coming soon!', 'info');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            elements.notificationContainer.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
