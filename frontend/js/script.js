@@ -4,6 +4,23 @@ let messageCount = 0;
 let fileCount = 0;
 let isCartoonTheme = true;
 
+const BACKEND_URL = "https://backend-multi9090.vercel.app";
+
+document.getElementById("sendBtn").addEventListener("click", () => {
+  fetch(`${BACKEND_URL}/api/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: "Hello backend!" })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+    // You can also show the response in the page
+    alert("Backend says: " + data.reply);
+  });
+});
+
+
 // Assistant configurations with fun descriptions
 const assistantConfigs = {
     general: {
